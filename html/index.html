@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Monitor de Recetas</title>
+<style>
+  h1 {
+    text-align: center;	
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background: url('https://kalococinas.com/wp-content/uploads/2022/01/cropped-cocinas-modernas-min-1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #3d1e5d;
+  }
+
+
+  .contenedor-principal {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 2rem;
+    gap: 2rem;
+  }
+
+  .panel-recetas, .panel-ingredientes {
+    flex: 1;
+  }
+
+  .panel-grafico {
+    flex: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(125, 64, 170, 0.15);
+    padding: 2rem;
+    height: 300px;
+  }
+
+  h1, h2 {
+    color: #4b2354;
+  }
+
+  #lista-recetas {
+    margin-bottom: 2rem;
+  }
+
+  .receta-item {
+    cursor: pointer;
+    padding: 0.75rem 1rem;
+    background: #ffffff;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #d3bce6;
+    box-shadow: 0 2px 4px rgba(125, 64, 170, 0.1);
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+
+  .receta-item:hover {
+    background: #f3d9ff;
+    transform: translateY(-2px);
+  }
+
+  #ingredientes-lista {
+    background: #faf6fb;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(125, 64, 170, 0.15);
+  }
+
+  .ingrediente {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e0c8f0;
+  }
+
+  .ingrediente:last-child {
+    border-bottom: none;
+  }
+
+  .cantidad-unidad {
+    width: 140px;
+    font-weight: bold;
+    color: #6c3578;
+  }
+
+  .nombre-ingrediente {
+    flex-grow: 1;
+    margin-left: 1rem;
+    color: #4c2b63;
+  }
+
+  .checkbox-completado {
+    margin-left: 1rem;
+    transform: scale(1.2);
+    accent-color: #833ab4;
+  }
+
+  .indicador {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-left: 1rem;
+    border: 2px solid #7e3d96;
+    background-color: #c4a4d3;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .indicador:hover {
+    transform: scale(1.1);
+  }
+  .contenedor-total {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.panel {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(125, 64, 170, 0.15);
+  width: 300px;
+}
+
+#ingredientes-container {
+  background: #faf6fb;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(125, 64, 170, 0.15);
+}
+
+.ingrediente {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e0c8f0;
+}
+
+.nombre-ingrediente {
+  flex: 1;
+  text-align: right;
+  margin-right: 1rem;
+}
+
+.cantidad-unidad {
+  width: 90px;
+  text-align: right;
+  font-weight: bold;
+  color: #6c3578;
+}
+
+.checkbox-completado {
+  margin: 0 0.5rem;
+  transform: scale(1.2);
+  accent-color: #833ab4;
+}
+
+.indicador {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #7e3d96;
+  background-color: #c4a4d3;
+}
+
+.radial {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: conic-gradient(#7e3d96 calc(var(--porcentaje) * 1%), #eee 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 8px solid #d3bce6;
+}
+
+.radial::after {
+  content: "";
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  background: #fff;
+  border-radius: 50%;
+  z-index: 1;
+}
+.contenedor-titulo {
+  text-align: center;
+  padding: 2rem 0;
+  background: rgba(255, 255, 255, 0.6); 
+  border-bottom: 2px solid #d3bce6;
+  box-shadow: 0 4px 10px rgba(125, 64, 170, 0.1);
+}
+
+.contenedor-titulo h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #4b2354;
+}
+
+
+/* Asegura que el texto esté encima del ::after */
+#texto-peso {
+  position: relative;
+  z-index: 2;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4b2354;
+}
+</style>
+</head>
+	
+<body>
+  <div class="contenedor-titulo">
+  <h1>Monitor de Recetas</h1>
+</div>
+
+  <div class="contenedor-total">
+    <div class="panel" id="lista-panel">
+      <h2>Recetas</h2>
+      <div id="recetas-container">Cargando recetas...</div>
+    </div>
+
+    <div class="panel" id="ingredientes-panel" style="display:none;">
+      <h2>Ingredientes</h2>
+      <div id="ingredientes-container"></div>
+    </div>
+
+    <div class="panel panel-grafico" id="panel-grafico" style="display:none;">
+      <div id="grafico-peso" class="radial">
+  <span id="texto-peso">0 g</span>
+</div>
+
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://192.168.56.2:3000';
+    const sensor_id = 1;
+
+    let ingredientesData = [];
+    let lecturaActual = 0;
+
+    async function cargarRecetas() {
+      try {
+        const res = await fetch(`${API_BASE}/recetas`);
+        const recetas = await res.json();
+        const cont = document.getElementById('recetas-container');
+        cont.innerHTML = '';
+        if (!Array.isArray(recetas) || recetas.length === 0) {
+          cont.innerText = "No hay recetas disponibles.";
+          return;
+        }
+        recetas.forEach(r => {
+          const div = document.createElement('div');
+          div.className = 'receta-item';
+          div.innerText = r.nombre ?? '[sin nombre]';
+          div.onclick = () => seleccionarReceta(r.id);
+          cont.appendChild(div);
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById('recetas-container').innerText = "Error al cargar recetas.";
+      }
+    }
+
+    async function seleccionarReceta(id) {
+      document.getElementById('ingredientes-panel').style.display = 'block';
+      const cont = document.getElementById('ingredientes-container');
+      const grafico = document.getElementById('panel-grafico');
+      cont.innerHTML = 'Cargando ingredientes...';
+      try {
+        const res = await fetch(`${API_BASE}/recetas/${id}/ingredientes`);
+        ingredientesData = await res.json();
+        cont.innerHTML = '';
+
+        const hayGramos = ingredientesData.some(ing => ing.unidad === 'g');
+        grafico.style.display = hayGramos ? 'flex' : 'none';
+
+ingredientesData.forEach((ing, idx) => {
+  const div = document.createElement('div');
+  div.className = 'ingrediente';
+  div.innerHTML = `
+    <span class="nombre-ingrediente">${ing.nombre}</span>
+    <span class="cantidad-unidad">${ing.cantidad} ${ing.unidad}</span>
+    <input type="checkbox" class="checkbox-completado" id="chk-${idx}">
+    <div class="indicador" id="indicador-${idx}" style="visibility: ${ing.unidad === 'g' ? 'visible' : 'hidden'};"></div>
+  `;
+  cont.appendChild(div);
+});
+
+      } catch (e) {
+        console.error(e);
+        cont.innerText = 'Error al cargar ingredientes.';
+      }
+    }
+
+    async function actualizarLectura() {
+      try {
+        const res = await fetch(`${API_BASE}/sensores/${sensor_id}/ultima`);
+        const d = await res.json();
+        lecturaActual = d.valor;
+        actualizarIndicadores();
+        actualizarGrafico();
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    function actualizarIndicadores() {
+      ingredientesData.forEach((ing, idx) => {
+        const chk = document.getElementById(`chk-${idx}`);
+        if (ing.unidad !== 'g') return;
+
+        const ind = document.getElementById(`indicador-${idx}`);
+        if (!ind || !chk) return;
+
+        if (chk.checked) {
+          ind.style.backgroundColor = 'light purple';
+        } else if (lecturaActual > ing.cantidad) {
+          ind.style.backgroundColor = 'light purple';
+        } else {
+          const p = Math.min(lecturaActual / ing.cantidad, 1);
+          const r = Math.floor(255 * (1 - p));
+          const g = Math.floor(255 * p);
+          ind.style.backgroundColor = `rgb(${r},${g},0)`;
+        }
+      });
+    }
+
+function actualizarGrafico() {
+  const max = 2000; // 10 kg
+  const pct = Math.min(lecturaActual / max, 1) * 100;
+  const rad = document.getElementById('grafico-peso');
+  const texto = document.getElementById('texto-peso');
+  texto.innerText = `${lecturaActual} g`;
+  rad.style.setProperty('--porcentaje', pct);
+}
+
+
+    cargarRecetas();
+    setInterval(actualizarLectura, 1000);
+  </script>
+</body>
+</html>
