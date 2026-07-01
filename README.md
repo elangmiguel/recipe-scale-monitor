@@ -97,6 +97,3 @@ Ajusta la constante `API_BASE` dentro del `<script>` de `index.html` para que ap
 
 > Nota: la IP definida en `API_BASE` del frontend corresponde a la red local del laboratorio donde se desarrolló el proyecto. Para reproducirlo en otro entorno, ajusta esa IP y las reglas de CORS en el backend.
 
-## Estado del proyecto
-
-Proyecto académico. Pendiente: mover credenciales a variables de entorno, limpiar definiciones duplicadas de modelos en `main.py`.
